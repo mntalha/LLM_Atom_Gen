@@ -54,13 +54,13 @@ def get_model(model_name):
 
 def save_model(model, name):
     
-    path = "./model/" + name
+    path = "./models/" + name
     model.save_pretrained(path)
     
 
 def load_model(name):
     
-    path = "./model/" + name
+    path = "./models/" + name
     
     model, tokenizer = FastLanguageModel.from_pretrained(path)
     

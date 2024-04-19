@@ -17,9 +17,9 @@ from sklearn.model_selection import train_test_split
 if __name__ == "__main__":
     
     try:
-        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json")
-        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json")
-        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json")
+        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
+        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
     except Exception as e:
         print(e)
         dft_3d = data("dft_3d")
@@ -40,9 +40,9 @@ if __name__ == "__main__":
         dumpjson(data=data_test, filename="./data/alpaca_Tc_supercon_test.json")
         dumpjson(data=data_val, filename="./data/alpaca_Tc_supercon_val.json")
 
-        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json")
-        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json")
-        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json")
+        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
+        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
 
 
     
@@ -65,16 +65,24 @@ if __name__ == "__main__":
     
     FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
     
-    dataset = dataset.map(
+    data_train = data_train.map(
+        formatting_prompts_func,
+        batched=True,
+    )
+    data_test = data_test.map(
+        formatting_prompts_func,
+        batched=True,
+    )
+    data_val = data_val.map(
         formatting_prompts_func,
         batched=True,
     )
     
-    trainer = get_trainer(model, tokenizer, data_train, data_val, text="text", epoch= 1, learning_rate = 3e-4)
+    trainer = get_trainer(model, tokenizer, data_train, data_val, text="text", epoch= 1, learning_rate = 5e-5)
 
     trainer_stats = trainer.train()
     save_model(model, fourbit_models)
-    dumpjson(data = trainer_stats, filename = "./results/" + fourbit_models + "_trainer_stats.json")
-    dumpjson(data = trainer.state.log_history, filename = "./results/" + fourbit_models + "_trainer_state_log_history.json")
+    dumpjson(data = trainer_stats, filename = "./results/" + fourbit_models.split("/")[0] + "_trainer_stats.json")
+    dumpjson(data = trainer.state.log_history, filename = "./results/" + fourbit_models.split("/")[0] + "_trainer_state_log_history.json")
 
     
