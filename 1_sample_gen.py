@@ -28,22 +28,19 @@ if __name__ == "__main__":
     FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
     
     try:
-        dataset = load_dataset("json", data_files="alpaca_Tc_supercon.json", split="train")
+        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
+        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
     except Exception as e:
         print(e)
-        dft_3d = data("dft_3d")
-        print(len(dft_3d))
-        dataset = make_alpaca_json(dataset=dft_3d, prop="Tc_supercon")
-        dumpjson(data=dataset, filename="./alpaca_Tc_supercon.json")
-        dataset = Dataset.from_list(dataset)
 
     # dataset = dataset.map(
     #     eval_prompts,
     #     batched=True,
     # )
-    dataset = dataset.add_column("prompt", eval_prompts(dataset))
+    data_train = data_train.add_column("prompt", eval_prompts(data_train))
 
-    df = generate_sample(dataset, model, tokenizer, fourbit_models)
+    df = generate_sample(data_train, model, tokenizer, fourbit_models)
 
     print(df)
 
