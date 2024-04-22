@@ -10,11 +10,28 @@ import pandas as pd
 from eval_functions import *
 import glob
 from p_tqdm import p_map
-
+from sample_funcs import parse_fn
 
 
 if __name__ == "__main__":
-    csv_fns = [x for x in glob.glob(f"/home/jipengsun/atom-gen/samples_1.csv") 
+
+    try:
+        data_tr = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
+        data_te = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+    except Exception as e:
+        print(e)
+     
+    data_train = []
+    for i in (data_tr):
+         ciff = parse_fn(i["output"])
+         data_train.append(ciff)
+
+    data_test = []
+    for i in (data_te):
+         ciff = parse_fn(i["output"])
+         data_test.append(ciff)
+
+    csv_fns = [x for x in glob.glob(f"./generated_samples.csv") 
             if len(open(x).readlines()) > 1 and 'm3gnet_relaxed_energy' not in x
     ]
     # print(csv_fns)
@@ -34,12 +51,16 @@ if __name__ == "__main__":
         random_idx = np.random.choice(len(pred_crys), 10000)
         pred_crys = [pred_crys[x] for x in random_idx]
     
+    #test data test
+    gt_cov_cifs = data_test #pd.read_csv(args.test_cov_path)["cif"]
+    #gt_cov_crys_fn = args.test_cov_path.replace(".csv", "_cached.pkl")
+    gt_cov_crys = p_map(cif_str_to_crystal, gt_cov_cifs)
+
+    gt_novelty_cifs = data_train
+    gt_novelty_crys = p_map(cif_str_to_crystal, gt_novelty_cifs)    
+
     valid_crys = [x for x in pred_crys if x.valid]
     print("Number of valid crystals: ", len(valid_crys))
-
-    #test data
-    gt_cov_cifs = pd.read_csv(args.test_cov_path)["cif"]
-    gt_cov_crys_fn = args.test_cov_path.replace(".csv", "_cached.pkl")
 
     metrics = CDVAEGenEval(
         pred_crys, 
@@ -51,4 +72,3 @@ if __name__ == "__main__":
 
     metrics = {k: v for k,v in metrics.items()}
     print(metrics)
-    metrics['method'] = args.model_name
