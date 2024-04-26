@@ -11,19 +11,21 @@ if __name__ == "__main__":
 
     #from pure
     fourbit_models = [
-        "unsloth/mistral-7b-bnb-4bit",
-        "unsloth/mistral-7b-instruct-v0.2-bnb-4bit",
-        "unsloth/llama-2-7b-bnb-4bit",
-        "unsloth/llama-2-13b-bnb-4bit",
-        "unsloth/codellama-34b-bnb-4bit",
-        "unsloth/tinyllama-bnb-4bit",
-        "meta-llama/Llama-2-7b-hf"
+        "unsloth/mistral-7b-bnb-4bit", #X
+        "unsloth/mistral-7b-instruct-v0.2-bnb-4bit", #X
+        "unsloth/llama-2-7b-bnb-4bit",  #X
+        "unsloth/llama-2-13b-bnb-4bit", #X
+        "unsloth/codellama-34b-bnb-4bit", #X
+        "unsloth/tinyllama-bnb-4bit", #X
+        "meta-llama/Llama-2-7b-hf", 
+        "unsloth/llama-3-8b-bnb-4bit",  #X
+        "unsloth/llama-3-70b-bnb-4bit",
     ]  # More models at https://huggingface.co/unsloth
     
-    fourbit_models = fourbit_models[6]
+    fourbit_models = fourbit_models[7]
 
     # from pretrained 
-    model, tokenizer = load_model(fourbit_models) #/home/jipengsun/atom-gen/meta-llama
+    model, tokenizer = load_model(fourbit_models.split("/")[1]) #/home/jipengsun/atom-gen/meta-llama
         
     FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
     

@@ -31,7 +31,21 @@ if __name__ == "__main__":
          ciff = parse_fn(i["output"])
          data_test.append(ciff)
 
-    csv_fns = [x for x in glob.glob(f"./generated_samples.csv") 
+    fourbit_models = [
+        "unsloth/mistral-7b-bnb-4bit", #X
+        "unsloth/mistral-7b-instruct-v0.2-bnb-4bit", #X
+        "unsloth/llama-2-7b-bnb-4bit",  #X
+        "unsloth/llama-2-13b-bnb-4bit", #X
+        "unsloth/codellama-34b-bnb-4bit", #X
+        "unsloth/tinyllama-bnb-4bit", #X
+        "meta-llama/Llama-2-7b-hf", 
+        "unsloth/llama-3-8b-bnb-4bit",  #X
+        "unsloth/llama-3-70b-bnb-4bit",
+    ]  # More models at https://huggingface.co/unsloth
+
+    fourbit_models = fourbit_models[7]
+
+    csv_fns = [x for x in glob.glob(f"{fourbit_models.split('/')[1]}_generated_samples.csv") 
             if len(open(x).readlines()) > 1 and 'm3gnet_relaxed_energy' not in x
     ]
     # print(csv_fns)
@@ -67,7 +81,7 @@ if __name__ == "__main__":
         gt_cov_crys,
         gt_novelty_crys,
         n_samples=len(valid_crys), 
-        eval_model_name='mp20'
+        eval_model_name='mp20' #check if it true 
     ).get_metrics()
 
     metrics = {k: v for k,v in metrics.items()}
