@@ -16,15 +16,28 @@ import json
 
 import torch, os
 import os
+# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
+# Alternatively, you can directly set the device
+#torch.cuda.set_device(1)  # Replace "1" with the index of the GPU you want to use
 
 
 if __name__ == "__main__":
     
+
+    import argparse
+    parser = argparse.ArgumentParser(description='LLM Model Comparison')
+    parser.add_argument('--model', type=int, default=0,
+                         help='0, 1, 2, 3, .. 8') 
+
+    args = parser.parse_args()
+                        
     try:
         data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
         data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
-        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
+        data_val = []
+        # data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
         print(len(data_train),len(data_test), len(data_val))  
     except Exception as e:
         print(e)
@@ -33,42 +46,45 @@ if __name__ == "__main__":
         
         dataset = make_alpaca_json(dataset=dft_3d, prop="Tc_supercon")
         print(len(dataset))
-        train_ratio = 0.85
+        train_ratio = 0.90
         test_ratio = 0.10
-        val_ratio = 0.05
-
-        # First, split into training and temp sets
-        data_train, data_temp  = train_test_split(dataset, test_size=(1 - train_ratio), random_state=42)
+        #v#al_ratio = 0.05
+        data_val = []
         
-        relative_val_ratio = val_ratio / (test_ratio + val_ratio)
-        data_test, data_val = train_test_split(data_temp, test_size=relative_val_ratio, random_state=42)
+        # First, split into training and temp sets
+        data_train, data_test  = train_test_split(dataset, test_size=(1 - train_ratio), random_state=42)
+        
+        # relative_val_ratio = val_ratio / (test_ratio + val_ratio)
+        # data_test, data_val = train_test_split(data_temp, test_size=relative_val_ratio, random_state=42)
         
 
         dumpjson(data=data_train, filename="./data/alpaca_Tc_supercon_train.json")
         dumpjson(data=data_test, filename="./data/alpaca_Tc_supercon_test.json")
-        dumpjson(data=data_val, filename="./data/alpaca_Tc_supercon_val.json")
+        # dumpjson(data=data_val, filename="./data/alpaca_Tc_supercon_val.json")
 
         data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
         data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
-        data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
+        # data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
 
     # #from pretrained 
     # #model, tokenizer = load_model()
     
     #from pure
     fourbit_models = [
+        "unsloth/tinyllama-bnb-4bit", #X
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/mistral-7b-instruct-v0.2-bnb-4bit", #X
         "unsloth/llama-2-7b-bnb-4bit",  #X
+        "unsloth/gemma-7b-bnb-4bit" #X
+        "unsloth/llama-3-8b-bnb-4bit",  #X
         "unsloth/llama-2-13b-bnb-4bit", #X
         "unsloth/codellama-34b-bnb-4bit", #X
-        "unsloth/tinyllama-bnb-4bit", #X
-        "meta-llama/Llama-2-7b-hf", 
-        "unsloth/llama-3-8b-bnb-4bit",  #X
         "unsloth/llama-3-70b-bnb-4bit",
     ]  # More models at https://huggingface.co/unsloth
 
-    fourbit_models = fourbit_models[0]
+    fourbit_models = fourbit_models[args.model]
+    print("Models Name", fourbit_models)
+    print("Datasets: ",len(data_train), len(data_test))
     model, tokenizer = get_model(fourbit_models)
     
     #FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
@@ -81,10 +97,10 @@ if __name__ == "__main__":
         formatting_prompts_func,
         batched=True,
     )
-    data_val = data_val.map(
-        formatting_prompts_func,
-        batched=True,
-    )
+    # data_val = data_val.map(
+    #     formatting_prompts_func,
+    #     batched=True,
+    # )
     
     trainer = get_trainer(model, tokenizer, data_train, data_val, text="text", epoch= 10, learning_rate = 5e-5)
 

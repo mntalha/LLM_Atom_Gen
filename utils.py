@@ -54,9 +54,9 @@ def make_alpaca_json(dataset=[], prop="Tc_supercon"):
             info["input"] = (
                 "The chemical formula is "
                 + atoms.composition.reduced_formula
-                + "The  "
+                + ". The  "
                 + prop
-                + " is "
+                + " value is "
                 + str(round(i[prop], 3))
                 + ". The spacegroup is "
                 + i["spg_number"]
