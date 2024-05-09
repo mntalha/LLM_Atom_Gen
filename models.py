@@ -73,7 +73,6 @@ def get_trainer(model, tokenizer, data_train, data_val, text, epoch, learning_ra
     model=model,
     tokenizer=tokenizer,
     train_dataset=data_train,
-    eval_dataset = data_val, 
     dataset_text_field= text,
     max_seq_length=max_seq_length,
     dataset_num_proc=2,

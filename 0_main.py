@@ -16,8 +16,8 @@ import json
 
 import torch, os
 import os
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 # Alternatively, you can directly set the device
 #torch.cuda.set_device(1)  # Replace "1" with the index of the GPU you want to use
@@ -56,8 +56,6 @@ if __name__ == "__main__":
         data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
         data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
 
-
-    
     # #from pretrained 
     # #model, tokenizer = load_model()
     
@@ -74,10 +72,10 @@ if __name__ == "__main__":
         "unsloth/llama-3-70b-bnb-4bit",
     ]  # More models at https://huggingface.co/unsloth
 
-    fourbit_models = fourbit_models[7]
+    fourbit_models = fourbit_models[0]
     model, tokenizer = get_model(fourbit_models)
     
-    FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
+    #FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
     
     data_train = data_train.map(
         formatting_prompts_func,
