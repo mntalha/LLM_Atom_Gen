@@ -16,11 +16,7 @@ import json
 
 import torch, os
 import os
-# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
-# Alternatively, you can directly set the device
-#torch.cuda.set_device(1)  # Replace "1" with the index of the GPU you want to use
 
 
 if __name__ == "__main__":
