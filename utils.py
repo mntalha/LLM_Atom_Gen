@@ -45,11 +45,11 @@ def get_crystal_string_t(atoms):
 def make_alpaca_json(dataset=[], prop="Tc_supercon"):
     mem = []
     for i in dataset:
-        if i[prop] != "na":
+        if i[prop] != "na":  #i[prop] != "na"  i[prop] > 0.0
             atoms = Atoms.from_dict(i["atoms"])
             info = {}
             info["instruction"] = (
-                "Below is a description of a superconductor material."
+                "Generate atomic structure description with lattice lengths, angles, coordinates and atom types."
             )
             info["input"] = (
                 "The chemical formula is "
@@ -58,12 +58,11 @@ def make_alpaca_json(dataset=[], prop="Tc_supercon"):
                 + prop
                 + " value is "
                 + str(round(i[prop], 3))
-                + ". The spacegroup is "
-                + i["spg_number"]
+                # + ". The spacegroup is "
+                # + i["spg_number"]
                 + "."
-                + " Generate atomic structure description with lattice lengths, angles, coordinates and atom types."
             )
-            info["output"] = get_crystal_string_t(atoms)
+            info["response"] = get_crystal_string_t(atoms)
             mem.append(info)
     return mem
 
@@ -85,27 +84,29 @@ def parse_fn(gen_str):
     return structure.to(fmt="cif")
 
 
-alpaca_prompt = """Below is a description of a superconductor material..
+alpaca_prompt = """Below is a description of a superconductor material. Write a response that appropriately completes the request.
 
-    ### Instruction:
-    {}
+### Instruction:
+{}
+
+### Input:
+{}
+
+### Response:
+{}"""
         
-    ### Input:
-    {}
+#import re   
+#output = re.sub(r'\S+', 'the', output)
+    
+def formatting_prompts_func(examples, tokenizer):
 
-    ### Output:
-    {}"""
-        
-
-def formatting_prompts_func(examples, tokenizer = None):
-          
     instructions = examples["instruction"]
     inputs = examples["input"]
-    outputs = examples["output"]
+    outputs = examples["response"]
     texts = []
-    for instruction, input, output in zip(instructions, inputs, outputs):
+    for instruction, input, output in zip(instructions,inputs, outputs):
         # Must add EOS_TOKEN, otherwise your generation will go on forever!
-        text = alpaca_prompt.format(instruction, input, output) + '</s>' #tokenizer.eos_token
+        text = alpaca_prompt.format(instruction, input, output) + tokenizer.eos_token
         texts.append(text)
 
     return {
@@ -120,6 +121,6 @@ def eval_prompts(examples):
     texts = []
     for instruction, input in zip(instructions, inputs):
         # Must add EOS_TOKEN, otherwise your generation will go on forever!
-        text = alpaca_prompt.format(instruction, input, output) #+  '</s>' #tokenizer.eos_token #'</s>' #tokenizer.eos_token
+        text = alpaca_prompt.format(instruction, input, output) #+'</s>' #tokenizer.eos_token #'</s>' #tokenizer.eos_token
         texts.append(text)
     return texts

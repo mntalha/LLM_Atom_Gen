@@ -15,37 +15,46 @@ from sample_funcs import parse_fn
 
 if __name__ == "__main__":
 
+
+    import argparse
+    parser = argparse.ArgumentParser(description='LLM Model Comparison')
+    parser.add_argument('--model', type=int, default=5,
+                         help='0, 1, 2, 3, .. 8') 
+
+    args = parser.parse_args()
+
     try:
-        data_tr = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
-        data_te = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+        data_tr = load_dataset("json", data_files="./data/optb88vdw_bandgap_train.json", split="train")
+        data_te = load_dataset("json", data_files="./data/optb88vdw_bandgap_test.json", split="train")
     except Exception as e:
         print(e)
      
     data_train = []
     for i in (data_tr):
-         ciff = parse_fn(i["output"])
+         ciff = parse_fn(i["response"])
          data_train.append(ciff)
 
     data_test = []
     for i in (data_te):
-         ciff = parse_fn(i["output"])
+         ciff = parse_fn(i["response"])
          data_test.append(ciff)
 
+    #from pure
     fourbit_models = [
+        "unsloth/tinyllama-bnb-4bit", #X
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/mistral-7b-instruct-v0.2-bnb-4bit", #X
         "unsloth/llama-2-7b-bnb-4bit",  #X
+        "unsloth/gemma-7b-bnb-4bit", #X
+        "unsloth/llama-3-8b-bnb-4bit", #X 
         "unsloth/llama-2-13b-bnb-4bit", #X
         "unsloth/codellama-34b-bnb-4bit", #X
-        "unsloth/tinyllama-bnb-4bit", #X
-        "meta-llama/Llama-2-7b-hf", 
-        "unsloth/llama-3-8b-bnb-4bit",  #X
         "unsloth/llama-3-70b-bnb-4bit",
     ]  # More models at https://huggingface.co/unsloth
 
-    fourbit_models = fourbit_models[7]
+    fourbit_models = fourbit_models[args.model]
 
-    csv_fns = [x for x in glob.glob(f"{fourbit_models.split('/')[1]}_generated_samples.csv") 
+    csv_fns = [x for x in glob.glob(f"./gen/{fourbit_models.split('/')[1]}_generated_samples.csv") 
             if len(open(x).readlines()) > 1 and 'm3gnet_relaxed_energy' not in x
     ]
     # print(csv_fns)

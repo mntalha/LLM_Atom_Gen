@@ -7,13 +7,14 @@ Created on Tue Apr  2 17:08:27 2024
 """
 from jarvis.db.figshare import data
 from datasets import load_dataset
-from utils import make_alpaca_json, formatting_prompts_func
 from models import load_model, get_model, get_trainer, save_model
 from jarvis.db.jsonutils import loadjson, dumpjson
 from unsloth import FastLanguageModel
 from sklearn.model_selection import train_test_split
 import json
-
+from utils import make_alpaca_json, formatting_prompts_func
+import random
+import numpy as np
 import torch, os
 import os
 # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -22,13 +23,32 @@ import os
 # Alternatively, you can directly set the device
 #torch.cuda.set_device(1)  # Replace "1" with the index of the GPU you want to use
 
+def set_seed():
+    os.environ["WANDB_ANONYMOUS"] = "must"
+    random_seed = 42
+    random.seed(random_seed)
+    torch.manual_seed(random_seed)
+    np.random.seed(random_seed)
+    torch.cuda.manual_seed_all(random_seed)
+    try:
+        import torch_xla.core.xla_model as xm
+        xm.set_rng_state(random_seed)
+    except ImportError:
+        pass
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    os.environ["PYTHONHASHSEED"] = str(random_seed)
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = str(":4096:8")
+    torch.use_deterministic_algorithms(True)
+
+set_seed()
 
 if __name__ == "__main__":
     
 
     import argparse
     parser = argparse.ArgumentParser(description='LLM Model Comparison')
-    parser.add_argument('--model', type=int, default=0,
+    parser.add_argument('--model', type=int, default=3,
                          help='0, 1, 2, 3, .. 8') 
 
     args = parser.parse_args()
@@ -44,7 +64,7 @@ if __name__ == "__main__":
         dft_3d = data("dft_3d")
         print(len(dft_3d))
         
-        dataset = make_alpaca_json(dataset=dft_3d, prop="Tc_supercon")
+        dataset = make_alpaca_json(dataset=dft_3d, prop="Tc_supercon") #optb88vdw_bandgap  mbj_bandgap alpaca_Tc_supercon_val
         print(len(dataset))
         train_ratio = 0.90
         test_ratio = 0.10
@@ -75,8 +95,8 @@ if __name__ == "__main__":
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/mistral-7b-instruct-v0.2-bnb-4bit", #X
         "unsloth/llama-2-7b-bnb-4bit",  #X
-        "unsloth/gemma-7b-bnb-4bit" #X
-        "unsloth/llama-3-8b-bnb-4bit",  #X
+        "unsloth/gemma-7b-bnb-4bit", #X
+        "unsloth/llama-3-8b-bnb-4bit", #X 
         "unsloth/llama-2-13b-bnb-4bit", #X
         "unsloth/codellama-34b-bnb-4bit", #X
         "unsloth/llama-3-70b-bnb-4bit",
@@ -86,15 +106,15 @@ if __name__ == "__main__":
     print("Models Name", fourbit_models)
     print("Datasets: ",len(data_train), len(data_test))
     model, tokenizer = get_model(fourbit_models)
-    
     #FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
     
     data_train = data_train.map(
-        formatting_prompts_func,
+        lambda batch: formatting_prompts_func(batch, tokenizer),
         batched=True,
     )
+    #print(data_train["text"][0])
     data_test = data_test.map(
-        formatting_prompts_func,
+        lambda batch: formatting_prompts_func(batch, tokenizer),
         batched=True,
     )
     # data_val = data_val.map(
@@ -102,10 +122,10 @@ if __name__ == "__main__":
     #     batched=True,
     # )
     
-    trainer = get_trainer(model, tokenizer, data_train, data_val, text="text", epoch= 10, learning_rate = 5e-5)
+    trainer = get_trainer(model, tokenizer, data_train, data_val, text="text", epoch=8, learning_rate = 2e-4)
 
     trainer_stats = trainer.train()
-    save_model(model, fourbit_models.split("/")[1])
+    save_model(model, tokenizer, fourbit_models.split("/")[1])
     dumpjson(data = trainer_stats, filename = "./results/" + fourbit_models.split("/")[1] + "_trainer_stats.json")
     dumpjson(data = trainer.state.log_history, filename = "./results/" + fourbit_models.split("/")[1] + "_trainer_state_log_history.json")
 
