@@ -48,9 +48,9 @@ from pymatgen.core.structure import Structure
 import jarvis 
 
 fourbit_models = [
-        #"unsloth/tinyllama-chat", #X
+        "unsloth/tinyllama-chat", #X
         #"unsloth/mistral-7b-bnb-4bit", #X
-        "unsloth/gemma-7b-bnb-4bit", #X
+        #"unsloth/gemma-7b-bnb-4bit", #X
         #"unsloth/llama-3-8b-bnb-4bit", #X 
 ]  # More models at https://huggingface.co/unsloth
 
@@ -102,16 +102,16 @@ for idx, name in enumerate(fourbit_models):
 
     # Read the model 
     fourbit_model = fourbit_models[idx]
-    path = f"./1_gen_optb88vdw_bandgap/{fourbit_model.split('/')[1]}_generated_samples_updated.csv"
+    path = f"./1_gen_optb88vdw_bandgap/{fourbit_model.split('/')[1]}_generated_samples_relaxed.csv"
     df = pd.read_csv(path)
     print("********", name, path, len(df))
     
     for jdx, nname in df.iterrows():
 
-        print("RUNNINNNGGGGG......", jdx, name)
+        #print("RUNNINNNGGGGG......", jdx, name)
         
-        # if df.isna().loc[jdx, 'out_data_pred_relaxed'] != True:
-        #     continue
+        if df.isna().loc[jdx, 'out_data_pred_relaxed'] != True or jdx < 1300:
+            continue
         
         print("RUNNINNNGGGGG......", jdx, name)
         try:

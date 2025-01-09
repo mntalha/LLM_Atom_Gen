@@ -45,7 +45,7 @@ def get_crystal_string_t(atoms):
 def make_alpaca_json(dataset=[], prop="Tc_supercon"):
     mem = []
     for i in dataset:
-        if i[prop] != "na":  #i[prop] != "na"  i[prop] > 0.0
+        if i[prop] != "na":  #supercon i[prop] != "na"   opt_bandgap i[prop] > 0.0
             atoms = Atoms.from_dict(i["atoms"])
             info = {}
             info["instruction"] = (

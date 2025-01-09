@@ -2,6 +2,7 @@ from pymatgen.core import Structure
 from pymatgen.core.lattice import Lattice
 import pandas as pd
 import random
+
 def parse_fn(gen_str):
     lines = [x for x in gen_str.split("\n") if len(x) > 0]
     lengths = [float(x) for x in lines[0].split(" ")]
@@ -40,13 +41,13 @@ def ge_samples(data, model, tokenizer, model_name):
     print(material_str)
 def generate_sample(data, model, tokenizer, model_name):
 
-    count = 0 
-    num_samples = 10 
-    start_range = 0
-    end_range = len(data)
-    random_idx = random.sample(range(start_range, end_range), num_samples * 5)
+    # count = 0 
+    # num_samples = 15 
+    # start_range = 0
+    # end_range = len(data)
+    # random_idx = random.sample(range(start_range, end_range), num_samples * 5)
     prompts = []
-    for idx in random_idx:
+    for idx, d_data in enumerate(data):
         prompt = data["prompt"][idx]
         prompts.append(prompt)
 
@@ -65,8 +66,8 @@ def generate_sample(data, model, tokenizer, model_name):
             continue
         generate_ids = model.generate(
                 **batch,
-                do_sample=True,
-                max_new_tokens=256,
+                do_sample=False,
+                max_new_tokens=4096,
                 pad_token_id=tokenizer.eos_token_id,
                 use_cache=True)
         try:
@@ -91,9 +92,6 @@ def generate_sample(data, model, tokenizer, model_name):
                 count += 1
                 if count > 2:
                     break
-                # tried += 1
-                # if tried > 5:
-                #     pass
                 continue
             count = 0
             print("1 added ...")

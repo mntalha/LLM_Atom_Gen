@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description='LLM Model Comparison')
-    parser.add_argument('--model', type=int, default=3,
+    parser.add_argument('--model', type=int, default=0,
                          help='0, 1, 2, 3, .. 8') 
 
     args = parser.parse_args()
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         dft_3d = data("dft_3d")
         print(len(dft_3d))
         
-        dataset = make_alpaca_json(dataset=dft_3d, prop="Tc_supercon") #optb88vdw_bandgap  mbj_bandgap alpaca_Tc_supercon_val
+        dataset = make_alpaca_json(dataset=dft_3d, prop="mbj_bandgap") #optb88vdw_bandgap  mbj_bandgap alpaca_Tc_supercon_val
         print(len(dataset))
         train_ratio = 0.90
         test_ratio = 0.10
@@ -78,12 +78,12 @@ if __name__ == "__main__":
         # data_test, data_val = train_test_split(data_temp, test_size=relative_val_ratio, random_state=42)
         
 
-        dumpjson(data=data_train, filename="./data/alpaca_Tc_supercon_train.json")
-        dumpjson(data=data_test, filename="./data/alpaca_Tc_supercon_test.json")
+        dumpjson(data=data_train, filename="./data/alpaca_mbj_bandgap_train.json")
+        dumpjson(data=data_test, filename="./data/alpaca_mbj_bandgap_test.json")
         # dumpjson(data=data_val, filename="./data/alpaca_Tc_supercon_val.json")
 
-        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
-        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+        data_train = load_dataset("json", data_files="./data/alpaca_mbj_bandgap_train.json", split="train")
+        data_test = load_dataset("json", data_files="./data/alpaca_mbj_bandgap_test.json", split="train")
         # data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
 
     # #from pretrained 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     
     #from pure
     fourbit_models = [
-        "unsloth/tinyllama-bnb-4bit", #X
+        "unsloth/tinyllama-chat", #X
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/mistral-7b-instruct-v0.2-bnb-4bit", #X
         "unsloth/llama-2-7b-bnb-4bit",  #X
@@ -100,6 +100,7 @@ if __name__ == "__main__":
         "unsloth/llama-2-13b-bnb-4bit", #X
         "unsloth/codellama-34b-bnb-4bit", #X
         "unsloth/llama-3-70b-bnb-4bit",
+        "knc6/atomgpt_mistral_tc_supercon",
     ]  # More models at https://huggingface.co/unsloth
 
     fourbit_models = fourbit_models[args.model]
