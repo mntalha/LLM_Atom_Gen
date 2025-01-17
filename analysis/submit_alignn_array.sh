@@ -1,7 +1,4 @@
 #!/bin/bash
-mkdir -p logs
-mkdir -p cifs_local
-mkdir -p partial_results
 #SBATCH --job-name=alignn_array
 #SBATCH --time=2-00:00:00
 #SBATCH --nodes=1
