@@ -8,9 +8,9 @@ from sample_funcs import parse_fn
 from transformers import TextStreamer
 import time
 import random
-
+import numpy as np
 fourbit_models = [
-        "unsloth/tinyllama-chat", #X
+        #"unsloth/tinyllama-chat", #X
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/gemma-7b-bnb-4bit", #X
         "unsloth/llama-3-8b-bnb-4bit", #X 
@@ -37,16 +37,17 @@ def path_1(path):
                 
                 data_test = data_test.add_column("prompt", eval_prompts(data_test))
 
-
+                time_array = []
+                token_array = []
+                tokenbytime = []
                 # LLM OUTPUT GENERATION
                 
-                start = time.time()
 
                 random_samples = random.sample(data_test["prompt"], 20)
                 
                 for idx, prompt in enumerate(random_samples):
 
-                # for idx, prompt in enumerate(data_test["prompt"][:20]):
+                        start = time.time()
 
                         batch = llm_tokenizer(prompt, return_tensors="pt")
                         batch = {k: v.cuda() for k, v in batch.items()}
@@ -62,10 +63,31 @@ def path_1(path):
                                     skip_special_tokens=True, 
                                     clean_up_tokenization_spaces=True
                                     )
-                end = time.time()
+                        end = time.time()
+                        time_array.append(end-start)
+                        token_array.append(len(generate_ids[0]))
+                        tokenbytime.append(len(generate_ids[0]) / (end-start))
+
                 del(llm_model)
                 del(llm_tokenizer)
-                print('Elapsed time is %f seconds for 20 samples, avearaged %f' % (end-start,(end-start)/20))
+                # Output the results
+                print("**TIME")
+                print(f"Minimum: {np.min(time_array)}")
+                print(f"Maximum: {np.max(time_array)}")
+                print(f"Mean: {np.mean(time_array)}")
+                print(f"Standard Deviation: {np.std(time_array)}")
+
+                print("**TOKEN")
+                print(f"Minimum: {np.min(token_array)}")
+                print(f"Maximum: {np.max(token_array)}")
+                print(f"Mean: {np.mean(token_array)}")
+                print(f"Standard Deviation: {np.std(token_array)}")
+
+                print("**TOKEN TIME COMPARISON")
+                print(f"Minimum: {np.min(tokenbytime)}")
+                print(f"Maximum: {np.max(tokenbytime)}")
+                print(f"Mean: {np.mean(tokenbytime)}")
+                print(f"Standard Deviation: {np.std(tokenbytime)}")
 
 
 print("Randomly Assigned Results")
@@ -80,7 +102,7 @@ path_1("./2_models_mbj_bandgap")
 # Fixed prompt
 
 fourbit_models = [
-        "unsloth/tinyllama-chat", #X
+        #"unsloth/tinyllama-chat", #X
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/gemma-7b-bnb-4bit", #X
         "unsloth/llama-3-8b-bnb-4bit", #X 
@@ -107,17 +129,19 @@ def path_2(path):
                 
                 data_test = data_test.add_column("prompt", eval_prompts(data_test))
 
+                time_array = []
+                token_array = []
+                tokenbytime = []
 
                 # LLM OUTPUT GENERATION
                 
-                start = time.time()
 
                 sample = "Below is a description of a superconductor material. Write a response that appropriately completes the request.\n\n### Instruction:\nGenerate atomic structure description with lattice lengths, angles, coordinates and atom types.\n\n### Input:\nThe chemical formula is ScZnRh2.\n\n### Response:\n"
 
                 for idx in range(20):
 
                 # for idx, prompt in enumerate(data_test["prompt"][:20]):
-
+                        start = time.time()
                         batch = llm_tokenizer(sample, return_tensors="pt")
                         batch = {k: v.cuda() for k, v in batch.items()}
                         generate_ids = llm_model.generate(
@@ -132,10 +156,31 @@ def path_2(path):
                                     skip_special_tokens=True, 
                                     clean_up_tokenization_spaces=True
                                     )
-                end = time.time()
+
+                        end = time.time()
+                        time_array.append(end-start)
+                        token_array.append(len(generate_ids[0]))
+                        tokenbytime.append(len(generate_ids[0]) / (end-start))
+
                 del(llm_model)
                 del(llm_tokenizer)
-                print('Elapsed time is %f seconds for 20 samples, avearaged %f' % (end-start,(end-start)/20))
+                print("**TIME")
+                print(f"Minimum: {np.min(time_array)}")
+                print(f"Maximum: {np.max(time_array)}")
+                print(f"Mean: {np.mean(time_array)}")
+                print(f"Standard Deviation: {np.std(time_array)}")
+
+                print("**TOKEN")
+                print(f"Minimum: {np.min(token_array)}")
+                print(f"Maximum: {np.max(token_array)}")
+                print(f"Mean: {np.mean(token_array)}")
+                print(f"Standard Deviation: {np.std(token_array)}")
+
+                print("**TOKEN TIME COMPARISON")
+                print(f"Minimum: {np.min(tokenbytime)}")
+                print(f"Maximum: {np.max(tokenbytime)}")
+                print(f"Mean: {np.mean(tokenbytime)}")
+                print(f"Standard Deviation: {np.std(tokenbytime)}")
 
 print("Fixed Prompt")
 print("\n\nTC Supercon**************")
@@ -152,7 +197,7 @@ path_2("./2_models_mbj_bandgap")
 # Fixed prompt
 
 fourbit_models = [
-        "unsloth/tinyllama-chat", #X
+        #"unsloth/tinyllama-chat", #X
         "unsloth/mistral-7b-bnb-4bit", #X
         "unsloth/gemma-7b-bnb-4bit", #X
         "unsloth/llama-3-8b-bnb-4bit", #X 
@@ -180,16 +225,19 @@ def path_3(path):
                 data_test = data_test.add_column("prompt", eval_prompts(data_test))
 
 
+                time_array = []
+                token_array = []
+                tokenbytime = []
+
                 # LLM OUTPUT GENERATION
                 
-                start = time.time()
 
                 sample = ""
 
                 for idx in range(20):
 
-                # for idx, prompt in enumerate(data_test["prompt"][:20]):
 
+                        start = time.time()
                         batch = llm_tokenizer(sample, return_tensors="pt")
                         batch = {k: v.cuda() for k, v in batch.items()}
                         generate_ids = llm_model.generate(
@@ -204,10 +252,32 @@ def path_3(path):
                                     skip_special_tokens=True, 
                                     clean_up_tokenization_spaces=True
                                     )
-                end = time.time()
+                        end = time.time()
+                        time_array.append(end-start)
+                        token_array.append(len(generate_ids[0]))
+                        tokenbytime.append(len(generate_ids[0]) / (end-start))
+
+
                 del(llm_model)
                 del(llm_tokenizer)
-                print('Elapsed time is %f seconds for 20 samples, avearaged %f' % (end-start,(end-start)/20))
+                print("**TIME")
+                print(f"Minimum: {np.min(time_array)}")
+                print(f"Maximum: {np.max(time_array)}")
+                print(f"Mean: {np.mean(time_array)}")
+                print(f"Standard Deviation: {np.std(time_array)}")
+
+                print("**TOKEN")
+                print(f"Minimum: {np.min(token_array)}")
+                print(f"Maximum: {np.max(token_array)}")
+                print(f"Mean: {np.mean(token_array)}")
+                print(f"Standard Deviation: {np.std(token_array)}")
+
+                print("**TOKEN TIME COMPARISON")
+                print(f"Minimum: {np.min(tokenbytime)}")
+                print(f"Maximum: {np.max(tokenbytime)}")
+                print(f"Mean: {np.mean(tokenbytime)}")
+                print(f"Standard Deviation: {np.std(tokenbytime)}")
+
 
 print("Empty Prompt")
 print("\n\nTC Supercon**************")

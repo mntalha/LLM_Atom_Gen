@@ -48,14 +48,14 @@ if __name__ == "__main__":
 
     import argparse
     parser = argparse.ArgumentParser(description='LLM Model Comparison')
-    parser.add_argument('--model', type=int, default=0,
+    parser.add_argument('--model', type=int, default=1,
                          help='0, 1, 2, 3, .. 8') 
 
     args = parser.parse_args()
                         
     try:
-        data_train = load_dataset("json", data_files="./data/alpaca_Tc_supercon_train.json", split="train")
-        data_test = load_dataset("json", data_files="./data/alpaca_Tc_supercon_test.json", split="train")
+        data_train = load_dataset("json", data_files="./data/alpaca_mbj_bandgap_train.json", split="train")
+        data_test = load_dataset("json", data_files="./data/alpaca_mbj_bandgap_test.json", split="train")
         data_val = []
         # data_val = load_dataset("json", data_files="./data/alpaca_Tc_supercon_val.json", split="train")
         print(len(data_train),len(data_test), len(data_val))  

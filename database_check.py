@@ -2,7 +2,7 @@ from optimade.client import OptimadeClient
 import pandas as pd
 import re
 
-path = f"./2_gen_mbj_bandgap/material_generated_samples.csv"     
+path = f"./2_gen_mbj_bandgap/material_generated_samples_ternary_all.csv"     
 df = pd.read_csv(path)
 
 # Initialize the client
@@ -19,15 +19,31 @@ databases = {
 
 # Function to swap elements in the formula
 def swap_formula(formula):
-    elements = re.findall(r"[A-Z][a-z]?\d*", formula)  # Extract element-symbol + count
-    swapped_formula = "".join(reversed(elements))  # Reverse order
-    return swapped_formula
+    # Extract element symbols and their counts
+    elements = re.findall(r"[A-Z][a-z]?\d*", formula)
+    print(elements) #ternary
+    if len(elements) == 3:
+        # Swap first and third elements
+        elements[0], elements[2] = elements[2], elements[0]
+        
+        swapped_formula = "".join(elements)
+        return swapped_formula
+    if len(elements) == 2: #binary
+        # Swap first and second elements
+        elements = re.findall(r"[A-Z][a-z]?\d*", formula)  # Extract element-symbol + count
+        swapped_formula = "".join(reversed(elements))  # Reverse order
+        return swapped_formula
+    else:
+        return formula
 
 
-for database in databases:
 
-    for index, row in enumerate(df.iterrows()):
 
+for index, row in enumerate(df.iterrows()):
+
+    print("Processing index:", index)
+        
+    for database in databases:
         # Initialize the client for JARVIS
         try:
             base_url = databases[database]
@@ -36,12 +52,11 @@ for database in databases:
             formula =  df.loc[index, 'formula']
             query = f'chemical_formula_reduced="{formula}"'
             response = client.get(filter=query)
-            print(formula, index, database, "..........")
 
             if len((response['structures'][query][base_url]['data'])):
                 df.loc[index, database] = len((response['structures'][query][base_url]['data']))
                 df.loc[index, database +"_id"] = (response['structures'][query][base_url]['data'])[0]['id']
-                print(index, database, "found..")
+                print(formula, "found..")
                 df.to_csv(f"./2_gen_mbj_bandgap/material_generated_samples_database_added.csv", index=False)
             else: 
                 formula = swap_formula(formula)
@@ -50,11 +65,11 @@ for database in databases:
                 if len((response['structures'][query][base_url]['data'])):
                     df.loc[index, database] = len((response['structures'][query][base_url]['data']))
                     df.loc[index, database +"_id"] = (response['structures'][query][base_url]['data'])[0]['id']
-                    print("found..")
+                    print("swapped found..", formula)
                     df.to_csv(f"./2_gen_mbj_bandgap/material_generated_samples_database_added.csv", index=False)
                 else:
                     print("Not Found..")
         except Exception as e: 
             print("ERRORR Look at", formula, index, database)
 
-df.to_csv(f"./2_gen_mbj_bandgap/material_generated_samples_database_added.csv", index=False)
+df.to_csv(f"./2_gen_mbj_bandgap/material_generated_samples_ternary_all_added.csv", index=False)

@@ -84,7 +84,7 @@ def parse_fn(gen_str):
     return structure.to(fmt="cif")
 
 
-alpaca_prompt = """Below is a description of a superconductor material. Write a response that appropriately completes the request.
+alpaca_prompt = """Below is a description of a material. Write a response that appropriately completes the request.  #superconductor
 
 ### Instruction:
 {}
