@@ -17,7 +17,6 @@ nvidia-nvtx-cu12==12.4.127
 pymatgen==2025.5.28
 regex==2024.11.6
 scikit-learn==1.7.0
-spicy==1.15.3
 tokenizers==0.21.1
 transformers==4.52.4
 unsloth==2025.6.1
