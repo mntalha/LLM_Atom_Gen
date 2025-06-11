@@ -15,7 +15,7 @@ LLM_Atom_Gen/
 ├── README.md
 ├── requirements.txt
 ├── run_model.sh
-
+```
 
 ## Setting Up the Environment
 
