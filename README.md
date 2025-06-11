@@ -1,47 +1,107 @@
 # LLM_Atom_Gen
 
-LLM_Atom_Gen is a framework designed to generate novel, non-existent atoms using Large Language Models (LLMs). This repository provides tools and scripts for setting up the environment, training, evaluation, and analysis for atom generation and materials discovery.
+A project for generating atomic structures using Large Language Models (LLMs).
 
-## Features
+## Folder Structure
 
-- **Environment Setup:** Reproducible Conda environment via `environment.yml`.
-- **Training & Inference:** Python scripts and Jupyter notebooks for training, inference, and evaluation of LLMs for atom/material generation.
-- **Data Analysis:** Notebooks for dataset exploration, baseline creation, and results comparison.
-- **Research-Oriented:** Built for experimentation and extension in computational chemistry and AI-driven material discovery.
+```
+LLM_Atom_Gen/
+├── data/
+├── analysis/
+├── notebooks/
+├── outputs/
+├── colabnotebooks/
+├── *.py
+├── README.md
+├── requirements.txt
+├── run_model.sh
 
-## Getting Started
+## Setting Up the Environment
 
-1. **Clone the Repository:**
-    ```bash
-    git clone https://github.com/mntalha/LLM_Atom_Gen.git
-    cd LLM_Atom_Gen
-    ```
+You can set up the project dependencies using either `requirements.txt` or `environment.yaml`:
 
-2. **Create Conda Environment:**
-    ```bash
-    conda env create -f environment.yml
-    conda activate llm
-    ```
+### Using `requirements.txt` (with pip)
 
-3. **Run Experiments:**
-    - Use the provided Python scripts and Jupyter notebooks for data preparation, model training, inference, and evaluation.
+```bash
+pip install -r requirements.txt
+```
 
-## Repository Structure
+### Colab Notebooks
 
-- `environment.yml` — Conda environment specification.
-- `0_main.py`, `1_GEN_MbjBandgap.py`, `1_GEN_Tc_Supercon.py`, `1_sample_gen.py`, `2-sample_eval.py`, `inference.py`, `database_check.py`, `eval_functions.py`, `models.py`, etc. — Core Python scripts for training, generation, evaluation, and utilities.
-- Jupyter Notebooks:
-    - `(Plots1)ScatterPlots.ipynb`, `(Plots2)Database_Cmp.ipynb`, `(Plots3)Dataset_Exploaration.ipynb`, `(Plots4)figures.ipynb`
-    - `ALIGNN_Extension.ipynb`, `BaselineCreation.ipynb`, `Database_Check.ipynb`, `CSV_File_Checker.ipynb`, `FinalComparison.ipynb`, `MaterialGen.ipynb`, `Mistral_Comp.ipynb`, `Reprocubility.ipynb`, `Relaxer_Result.ipynb`, `Tc_Supercon.ipynb`, etc.
-- `data/` — (If present) Data files for training and evaluation.
-- `0_models_tc_supercon/`, `1_models_optb88vdw_bandgap/`, `2_models_mbj_bandgap/` — Model directories (see their README files for download links).
-- `.env.example` — Example environment variable file.
-- `README.md` — Main documentation and usage instructions.
+The `colabnotebooks/` folder contains example notebooks that can be easily run on Google Colab. These notebooks provide step-by-step demonstrations for data processing, model training, and inference, making it convenient to experiment with the project in a cloud environment without local setup.
+Currently available notebook(s):
 
-## Contributing
+- `MistralExampleGeneration.ipynb`: Demonstrates example generation using the Mistral model on Colab, including library installation and model inference.
 
-Contributions are welcome! Please open issues or submit pull requests for improvements, bug fixes, or new features.
+### Using `environment.yaml` (with conda)
 
-## License
+```bash
+conda env create -f environment.yaml
+conda activate <your_env_name>
+```
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Replace `<your_env_name>` with the name specified in the `environment.yaml` file.
+
+## Running Model Training
+
+Before running the training script, ensure it is executable. You can set the execute permission with:
+
+```bash
+chmod +x run_model.sh
+```
+
+To train the model using the provided shell script, run:
+
+```bash
+./run_model.sh
+```
+
+This script will execute the necessary commands to start the training process. Make sure you have configured any required arguments or environment variables inside `run_model.sh` before running it.
+
+## Model Selection
+
+Model training is managed by `main.py`, which takes an argument specifying the model to use. The available models are indexed as follows:
+
+| Index | Model Name                                      |
+|-------|-------------------------------------------------|
+| 0     | unsloth/tinyllama-chat                          |
+| 1     | unsloth/mistral-7b-bnb-4bit                     |
+| 2     | unsloth/mistral-7b-instruct-v0.2-bnb-4bit       |
+| 3     | unsloth/llama-2-7b-bnb-4bit                     |
+| 4     | unsloth/gemma-7b-bnb-4bit                       |
+| 5     | unsloth/llama-3-8b-bnb-4bit                     |
+| 6     | unsloth/llama-2-13b-bnb-4bit                    |
+| 7     | unsloth/codellama-34b-bnb-4bit                  |
+| 8     | unsloth/llama-3-70b-bnb-4bit                    |
+| 9     | knc6/atomgpt_mistral_tc_supercon                |
+
+To train with a specific model, run:
+
+```bash
+python main.py --model <index>
+```
+
+Replace `<index>` with the desired model's index from the table above.
+
+## Inference
+
+To perform inference using a trained model, refer to `generation.py`. The script demonstrates inference for the `tc_supercon` dataset, but is structured to be generalizable for other datasets as well.
+
+Note: Input and output files are not specified via command-line arguments; instead, data paths and output locations are defined within the code itself. To adapt `generation.py` for different datasets, modify the relevant data loading and preprocessing sections directly in the script.
+
+
+## Model Time Comparison
+
+To compare the inference or training times of different models, use the `time_cmp.py` script. This script benchmarks the performance of each model listed above and outputs timing statistics.
+
+### Running Time Comparison
+
+```bash
+python time_cmp.py
+```
+
+<!-- 
+    Documentation generated by GitHub Copilot and other LLM models.
+    This documentation comment provides an overview and usage details for the selected code.
+    For more information, refer to the project README file.
+-->
