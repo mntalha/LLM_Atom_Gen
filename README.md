@@ -16,6 +16,7 @@ LLM_Atom_Gen/
 ├── requirements.txt
 ├── run_model.sh
 
+
 ## Setting Up the Environment
 
 You can set up the project dependencies using either `requirements.txt` or `environment.yaml`:
