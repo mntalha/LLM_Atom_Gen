@@ -90,6 +90,15 @@ To perform inference using a trained model, refer to `generation.py`. The script
 
 Note: Input and output files are not specified via command-line arguments; instead, data paths and output locations are defined within the code itself. To adapt `generation.py` for different datasets, modify the relevant data loading and preprocessing sections directly in the script.
 
+## Mistral Model Saved Places 
+    
+    ### HuggingFace Link
+        [mntalha/Mistral-Model](https://huggingface.co/mntalha/Mistral-Model)
+
+
+    ### Google Drive Link 
+        [Mistral-Model](https://drive.google.com/drive/folders/1_gjPU-N7rOz09fS7PVR4hAWyzu-HUp8D?usp=share_link)
+
 
 ## Model Time Comparison
 
