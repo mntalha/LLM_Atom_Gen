@@ -93,7 +93,7 @@ Note: Input and output files are not specified via command-line arguments; inste
 ## Mistral Model Saved Places 
     
 ### HuggingFace Link
-        [mntalha/Mistral-Model](https://huggingface.co/mntalha/Mistral-Model)
+        [Mistral-Model](https://huggingface.co/mntalha/Mistral-Model)
 
 
 ### Google Drive Link 
