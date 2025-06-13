@@ -1,12 +1,17 @@
-# LLM_Atom_Gen
+## SemiconLLM: Evaluating Large Language Models for Inverse Semiconductor Design
 
 A project for generating atomic structures using Large Language Models (LLMs).
+
+In this study, we fine-tune multiple LLMs on various density functional theory (DFT) datasets (including superconducting and semiconducting materials at different levels of DFT theory) and apply quantitative metrics to benchmark their effectiveness.
+
+![Example Atomic Structure](figures/FullPipeline.png)
 
 ## Folder Structure
 
 ```
 LLM_Atom_Gen/
 ├── data/
+├── figures/
 ├── analysis/
 ├── notebooks/
 ├── outputs/
@@ -90,14 +95,15 @@ To perform inference using a trained model, refer to `generation.py`. The script
 
 Note: Input and output files are not specified via command-line arguments; instead, data paths and output locations are defined within the code itself. To adapt `generation.py` for different datasets, modify the relevant data loading and preprocessing sections directly in the script.
 
-## Mistral Model Saved Places 
-    
-### HuggingFace Link
-        [Mistral-Model](https://huggingface.co/mntalha/Mistral-Model)
+## Mistral Model Saved Locations
 
+You can access the saved Mistral model from the following sources:
 
-### Google Drive Link 
-        [Mistral-Model](https://drive.google.com/drive/folders/1_gjPU-N7rOz09fS7PVR4hAWyzu-HUp8D?usp=share_link)
+| Platform        | Link                                                                                  |
+|-----------------|---------------------------------------------------------------------------------------|
+| **Hugging Face**| [Mistral-Model on Hugging Face](https://huggingface.co/mntalha/Mistral-Model)         |
+| **Google Drive**| [Mistral-Model on Google Drive](https://drive.google.com/drive/folders/1_gjPU-N7rOz09fS7PVR4hAWyzu-HUp8D?usp=share_link) |
+
 
 
 ## Model Time Comparison
