@@ -22,6 +22,11 @@ LLM_Atom_Gen/
 ├── run_model.sh
 ```
 
+## Colab Notebook Example
+
+You can find an example Colab notebook demonstrating the Mistral model generating an atomic structure in [`colabnotebooks/MistralExampleGeneration.ipynb`](colabnotebooks/MistralExampleGeneration.ipynb).
+
+
 ## Setting Up the Environment
 
 You can set up the project dependencies using either `requirements.txt` or `environment.yaml`:
