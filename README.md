@@ -123,7 +123,7 @@ python time_cmp.py
 
 ## Publication
 
-Muhammed Nur Talha Kilic, ...", Manuscript in preparation.
+Muhammed Nur Talha Kilic, Daniel Wines, Kamal Choudhary,Vishu Gupta, Youjia Li, Sayak Chakrabarty, Wei-Keng Liao, Alok Choudhary, Ankit Agrawal", Manuscript in preparation.
 
 
 ## Contact
